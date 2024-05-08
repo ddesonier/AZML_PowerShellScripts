@@ -1,4 +1,4 @@
-
+# Get-AzMLDataCatalogModels
 ### Function Overview
 The `Get-ModelsInfoByModelName` function queries an Azure Machine Learning registry to retrieve details about models. It takes three mandatory parameters:
 

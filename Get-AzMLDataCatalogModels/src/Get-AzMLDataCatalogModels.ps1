@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Retrieves model information from an Azure Machine Learning registry based on specified parameters.
 .DESCRIPTION
@@ -78,13 +78,17 @@ function Get-ModelsInfoByModelName {
 
         [Parameter(Mandatory=$true)]  
         [ValidateNotNullOrEmpty()]  
-        [string]$FilePath 
+        [string]$MDLFilePath,
+
+        [Parameter(Mandatory=$true)]  
+        [ValidateNotNullOrEmpty()]  
+        [string]$INVFIlePath
     )  
       
-    $AllModels = @()    # all models for given registry 
-    $ModelInfo = @()    # az ml model show output
-    $investigate = @()  # Models without Version numbers
-    $progress = 1       # Progress Counter 
+    $AllModels = @()    #all models for given registry 
+    $ModelInfo = @()    #az ml model show output
+    $investigate = @()  #Models without Version numbers
+    $progress = 1
       
     $mdlsReg = az ml model list --resource-group $ResourceGroup --registry-name $Registry | ConvertFrom-Json   
     foreach ($model in $mdlsReg) { 
@@ -102,10 +106,8 @@ function Get-ModelsInfoByModelName {
         $AllModels += $ModelInfo
         
     }
-    $filename = $FilePath + "models" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv" 
-    $AllModels | Export-Csv $filename -Append -NoTypeInformation -Encoding UTF8  
-    $filename = $FilePath + "investigate" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv" 
-    $investigate | Export-Csv $filename -Append -NoTypeInformation -Encoding UTF8  
+    $AllModels | Export-Csv $MDLFilePath -Append -NoTypeInformation -Encoding UTF8  
+    $investigate | Export-Csv $invfilename -Append -NoTypeInformation -Encoding UTF8  
 }  
 
 
@@ -141,14 +143,17 @@ function Get-ModelsByRegistry {
 }  
   
 # Usage example  
+#$registries= @('azure-openai','azureml','azureml-meta','azureml-mistral','azureml-msr','nvidia-ai','HuggingFace','azureml-restricted','azureml-cohere')
 $registries= @('azure-openai','azureml','azureml-meta','azureml-mistral','azureml-msr','nvidia-ai', 'azureml-restricted','azureml-cohere')
 $cnt = 0
-$rg = 'Rg-demo'
+$rg = 'Rg-amltest'
+$mdlfilename = $FilePath + "models" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv"
+$invfilename = $FilePath + "investigate" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv" 
 foreach ($registry in $registries)
 {
     $mmd = Get-ModelsByRegistry -ResourceGroup $rg -Registry $registry
     Write-Output ($registry + "  Count = " + $mmd.count)
     $cnt += $mmd.count
-    ModelsInfoByModelName -ResourceGroup $rg -Registry $registry -ModelArray $mmd -FilePath "C:\tmp\"
+    ModelsInfoByModelName -ResourceGroup $rg -Registry $registry -ModelArray $mmd -MDLFilePath $mdlfilename -INVFIlePath $invfilename
 }
 Write-Output ("Model Count For these registries: " + $cnt)

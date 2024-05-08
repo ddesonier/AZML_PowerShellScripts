@@ -81,11 +81,10 @@ function Get-ModelsInfoByModelName {
         [string]$FilePath 
     )  
       
-    $AllModels = @()    #all models for given registry 
-    $ModelInfo = @()    #az ml model show output
-    $investigate = @()  #Models without Version numbers
-    $progress = 1
-    $FilePath = "C:\Users\ddesonier\tmp\"  #Path where 2 CSV files will be written
+    $AllModels = @()    # all models for given registry 
+    $ModelInfo = @()    # az ml model show output
+    $investigate = @()  # Models without Version numbers
+    $progress = 1       # Progress Counter 
       
     $mdlsReg = az ml model list --resource-group $ResourceGroup --registry-name $Registry | ConvertFrom-Json   
     foreach ($model in $mdlsReg) { 

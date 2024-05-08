@@ -141,15 +141,14 @@ function Get-ModelsByRegistry {
 }  
   
 # Usage example  
-#$registries= @('azure-openai','azureml','azureml-meta','azureml-mistral','azureml-msr','nvidia-ai','HuggingFace','azureml-restricted','azureml-cohere')
 $registries= @('azure-openai','azureml','azureml-meta','azureml-mistral','azureml-msr','nvidia-ai', 'azureml-restricted','azureml-cohere')
 $cnt = 0
-$rg = 'Rg-amltest'
+$rg = 'Rg-demo'
 foreach ($registry in $registries)
 {
     $mmd = Get-ModelsByRegistry -ResourceGroup $rg -Registry $registry
     Write-Output ($registry + "  Count = " + $mmd.count)
     $cnt += $mmd.count
-    ModelsInfoByModelName -ResourceGroup $rg -Registry $registry -ModelArray $mmd -FilePath "C:\Users\ddesonier\tmp\"
+    ModelsInfoByModelName -ResourceGroup $rg -Registry $registry -ModelArray $mmd -FilePath "C:\tmp\"
 }
 Write-Output ("Model Count For these registries: " + $cnt)

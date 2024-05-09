@@ -61,54 +61,54 @@
 
 
 
-function Get-ModelsInfoByModelName {  
-    [CmdletBinding()]  
-    param (  
-        [Parameter(Mandatory=$true)]  
-        [ValidateNotNullOrEmpty()]  
+function Get-ModelsInfoByModelName {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$ResourceGroup,
 
-        [Parameter(Mandatory=$true)]  
-        [ValidateNotNullOrEmpty()]  
-        [string]$Registry, 
-          
-        [Parameter(Mandatory=$true)]  
-        [ValidateNotNullOrEmpty()]  
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Registry,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [Array]$ModelArray,
 
-        [Parameter(Mandatory=$true)]  
-        [ValidateNotNullOrEmpty()]  
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$MDLFilePath,
 
-        [Parameter(Mandatory=$true)]  
-        [ValidateNotNullOrEmpty()]  
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$INVFIlePath
-    )  
-      
-    $AllModels = @()    #all models for given registry 
+    )
+
+    $AllModels = @()    #all models for given registry
     $ModelInfo = @()    #az ml model show output
     $investigate = @()  #Models without Version numbers
     $progress = 1
-      
-    $mdlsReg = az ml model list --resource-group $ResourceGroup --registry-name $Registry | ConvertFrom-Json   
-    foreach ($model in $mdlsReg) { 
-        Write-Output ("Model " + $progress++ + " of " + $ModelArray.count)   
-        Write-Output ("Registry: " + $Registry)  
-        Write-Output ("Model Name: " + $model.name)  
-        if ($model."latest version") {  
-            Write-Output ("Version: " + $model."latest version")  
-            $ModelInfo = az ml model show --name $model.name --version $model."latest version" --resource-group $ResourceGroup --registry-name $Registry | ConvertFrom-Json   
-        } else {  
-            $investigate += $model  
-            Write-Output ("No Version for Model Named: " + $model.name)  
-            Write-Output ("Model in Registry: " + $Registry)  
-        }  
+
+    $mdlsReg = az ml model list --resource-group $ResourceGroup --registry-name $Registry | ConvertFrom-Json
+    foreach ($model in $mdlsReg) {
+        Write-Output ("Model " + $progress++ + " of " + $ModelArray.count)
+        Write-Output ("Registry: " + $Registry)
+        Write-Output ("Model Name: " + $model.name)
+        if ($model."latest version") {
+            Write-Output ("Version: " + $model."latest version")
+            $ModelInfo = az ml model show --name $model.name --version $model."latest version" --resource-group $ResourceGroup --registry-name $Registry | ConvertFrom-Json
+        } else {
+            $investigate += $model
+            Write-Output ("No Version for Model Named: " + $model.name)
+            Write-Output ("Model in Registry: " + $Registry)
+        }
         $AllModels += $ModelInfo
-        
+
     }
-    $AllModels | Export-Csv $MDLFilePath -Append -NoTypeInformation -Encoding UTF8  
-    $investigate | Export-Csv $invfilename -Append -NoTypeInformation -Encoding UTF8  
-}  
+    $AllModels | Export-Csv $MDLFilePath -Append -NoTypeInformation -Encoding UTF8
+    $investigate | Export-Csv $INVFIlePath -Append -NoTypeInformation -Encoding UTF8
+}
 
 
 <#
@@ -126,29 +126,29 @@ function Get-ModelsInfoByModelName {
     Get-ModelsByRegistry -ResourceGroup "myResourceGroup" -Registry "myRegistry"
     Retrieves the list of models from the specified registry.
 #>
-function Get-ModelsByRegistry {  
-    [CmdletBinding()]  
-    param (   
-        [Parameter(Mandatory=$true)]  
-        [ValidateNotNullOrEmpty()]  
-        [string]$ResourceGroup,  
-             
-        [Parameter(Mandatory=$true)]  
-        [ValidateNotNullOrEmpty()]  
-        [string]$Registry  
-    )  
-      
-    $mdlsReg = az ml model list --resource-group $ResourceGroup --registry-name $Registry | ConvertFrom-Json  
+function Get-ModelsByRegistry {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$ResourceGroup,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Registry
+    )
+
+    $mdlsReg = az ml model list --resource-group $ResourceGroup --registry-name $Registry | ConvertFrom-Json
     return $mdlsReg
-}  
-  
-# Usage example  
+}
+
+# Usage example
 #$registries= @('azure-openai','azureml','azureml-meta','azureml-mistral','azureml-msr','nvidia-ai','HuggingFace','azureml-restricted','azureml-cohere')
 $registries= @('azure-openai','azureml','azureml-meta','azureml-mistral','azureml-msr','nvidia-ai', 'azureml-restricted','azureml-cohere')
 $cnt = 0
 $rg = 'Rg-amltest'
-$mdlfilename = $FilePath + "models" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv"
-$invfilename = $FilePath + "investigate" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv" 
+$mdlfilename = "C:\Users\ddesonier\tmp\" + "models" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv"
+$invfilename = "C:\Users\ddesonier\tmp\" + "investigate" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv"
 foreach ($registry in $registries)
 {
     $mmd = Get-ModelsByRegistry -ResourceGroup $rg -Registry $registry

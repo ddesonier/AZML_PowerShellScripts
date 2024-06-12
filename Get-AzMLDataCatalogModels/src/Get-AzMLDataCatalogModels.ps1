@@ -57,6 +57,7 @@
 
     Retrieves model details for the specified models in the given registry.
 
+    Registries azure-openai, azureml, azureml-meta, azureml-mistral. azureml-msr, nvidia-ai, HuggingFace, azureml-restricted, azureml-cohere
 #>
 
 
@@ -143,12 +144,12 @@ function Get-ModelsByRegistry {
 }
 
 # Usage example
-#$registries= @('azure-openai','azureml','azureml-meta','azureml-mistral','azureml-msr','nvidia-ai','HuggingFace','azureml-restricted','azureml-cohere')
+#$registries= @('azureml')
 $registries= @('azure-openai','azureml','azureml-meta','azureml-mistral','azureml-msr','nvidia-ai', 'azureml-restricted','azureml-cohere')
 $cnt = 0
 $rg = 'Rg-amltest'
-$mdlfilename = "C:\Users\ddesonier\tmp\" + "models" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv"
-$invfilename = "C:\Users\ddesonier\tmp\" + "investigate" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv"
+$mdlfilename = "C:\tmp\" + "models" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv"
+$invfilename = "C:\tmp\" + "investigate" + $(Get-Date -Format "MMddyyyy_HHmm") + ".csv"
 foreach ($registry in $registries)
 {
     $mmd = Get-ModelsByRegistry -ResourceGroup $rg -Registry $registry
